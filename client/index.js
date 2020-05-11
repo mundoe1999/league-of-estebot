@@ -24,10 +24,13 @@ var displayBox = document.getElementById("pop-up");
 var timerBox = document.getElementById("timer");
 let second = 0;
 let remainingEvents = 0;
-const EVENT_CONST= 3;
+let nextEventTimer = 0;
+const EVENT_CONST = 10;
+const TIMER_CONST = 30;
 
 
 let generateRemainingEvents = () =>  Math.floor(Math.random()*EVENT_CONST)+1;
+let generateNextEventTime = () => Math.floor(Math.random()*TIMER_CONST)+15;
 
 // Main Object for manipulating Events
 class Main {
@@ -55,6 +58,8 @@ class Main {
     // Display GameState
     this.displayGameState();
     remainingEvents = generateRemainingEvents();
+    nextEventTimer = generateNextEventTime();
+    console.log(remainingEvents);
     window.requestAnimationFrame(draw);
   }
   
@@ -84,7 +89,6 @@ class Main {
   }
   showEvent(){
     program.timerBool=true;
-    remainingEvents--;
     console.log(`Events: ${remainingEvents}`);
     // Fetch Random Event
     let randomEvent = {};
@@ -247,13 +251,19 @@ let timerStopped = false;
 function draw(timestamp){
   program.frameDraw();
   
+  // Counter Management
   if(program.frame % 30 === 0){
     second++;
+    nextEventTimer--;
     
   }
   
-  if(second % 10 === 9 ){
+  // Display Event and Text
+  if(nextEventTimer == 0){
     program.timerBool=true;
+    nextEventTimer = generateNextEventTime();
+    console.log("Timer: ", nextEventTimer);
+    remainingEvents--;
     program.showEvent();
   }
   timerBox.innerHTML = second;
