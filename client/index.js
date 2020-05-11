@@ -23,6 +23,11 @@
 var displayBox = document.getElementById("pop-up");
 var timerBox = document.getElementById("timer");
 let second = 0;
+let remainingEvents = 0;
+const EVENT_CONST= 3;
+
+
+let generateRemainingEvents = () =>  Math.floor(Math.random()*EVENT_CONST)+1;
 
 // Main Object for manipulating Events
 class Main {
@@ -47,20 +52,43 @@ class Main {
   }
 
   startProgram(){
+    // Display GameState
+    this.displayGameState();
+    remainingEvents = generateRemainingEvents();
     window.requestAnimationFrame(draw);
   }
   
   frameDraw(){
     this.frame++;
   }
-
+  
+  displayGameState(){
+    let gameStateBox = document.getElementById("state");
+    switch(this.gameState){
+      case 0:
+        gameStateBox.innerHTML = "Pre-Game";
+        break;
+      case 1:
+        gameStateBox.innerHTML = "Early-Game";
+        break;
+      case 2:
+        gameStateBox.innerHTML = "Mid-Game";
+        break;
+      case 3:
+        gameStateBox.innerHTML = "Late-Game";
+        break;
+      case 4:
+        gameStateBox.innerHTML = "Post-Game";
+        break;
+    }
+  }
   showEvent(){
     program.timerBool=true;
-
+    remainingEvents--;
+    console.log(`Events: ${remainingEvents}`);
     // Fetch Random Event
     let randomEvent = {};
     randomEvent = this.selectRandomEvent();
-    console.log(randomEvent);
 
     // Generating Display for the Event
 
@@ -117,6 +145,11 @@ class Main {
       displayBox.innerHTML = "";
 
       // Continue regularly Scheduled program
+      if(remainingEvents === 0){
+        this.gameState++;
+        remainingEvents = generateRemainingEvents();
+        this.displayGameState();
+      }
       this.timerBool = false;
       second++;
       window.requestAnimationFrame(draw);
@@ -142,7 +175,7 @@ class Main {
               important_stat: 2,
               success_modifiers: [400,-1,1,1,0,0],
               success_text: "You successfully kill your laner, hyping you up, and giving you a nice amount of gold!",
-              fail_modifiers: [0,0,0,0,0,0],
+              fail_modifiers: [0,1,0,0,0,0],
               fail_text: "You were unable to kill the laner, even though you tried"
             },
             {
@@ -157,7 +190,38 @@ class Main {
           ]
         };
       case 2:
-        break;
+        return {
+          question: "The Dragon has spawned. You do not have vision on the dragon and the enemy jungler is nowhere to be seen. Do you wish to take it?",
+          choices: [
+            {
+              text: "Take The Dragon",
+              risk: 5,
+              important_stat: 2,
+              success_modifiers: [50,-2,4,0,0,0],
+              success_text: "You were able to take the dragon, granting you a buff for your entire party. Success!",
+              fail_modifiers: [300,2,-2,1,1,0],
+              fail_text: "The enemy team was apparently there. Even though your skills were good and you killed an enemy, you die and they take the dragon."
+            },
+            {
+              text: "Leave the Dragon alone",
+              risk: 4,
+              important_stat: 2,
+              success_modifiers: [0,0,0,0,0,0],
+              success_text: "You decide to leave the dragon alone",
+              fail_modifiers: [0,1,0,0,0,0],
+              fail_text: "The enemy decided to take advantage of your lack of objective taking, and they took it. Whatever."
+            },
+            {
+              text: "Ward the Dragon Pit.",
+              risk: 5,
+              important_stat: 2,
+              success_modifiers: [-75,0,1,0,0,0],
+              success_text: "You are able to place a nice delicate pink ward in the enemy pit, feeling successfully happy for doing so!",
+              fail_modifiers: [0,4,0,0,1,0],
+              fail_text: "As you go to ward the Dragon pit, you get ambused by the enemy team and you die a quick death. Tilting you considerably"
+            }
+          ]
+        };
       case 3:
         break;
       case 4:
@@ -184,13 +248,11 @@ function draw(timestamp){
   program.frameDraw();
   
   if(program.frame % 30 === 0){
-    console.log(second);
     second++;
     
   }
   
   if(second % 10 === 9 ){
-    console.log(second);
     program.timerBool=true;
     program.showEvent();
   }
