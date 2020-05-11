@@ -1,0 +1,15 @@
+{
+  "name": "league-of-bots",
+  "version": "1.0.0",
+  "description": "Final Project for Web Production",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Esteban Mundo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
