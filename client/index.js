@@ -67,7 +67,7 @@ class Main {
     // gameState stores the index of which event to record
     //     0          1        2         3        4
     // [ PreGame, EarlyGame, MidGame, LateGame, PostGame]
-    this.gameState = 3;
+    this.gameState = 0;
     
     /***
      * 0 -> Gold
@@ -77,7 +77,7 @@ class Main {
      * 4 -> Deaths
      * 5 -> Assists
      */
-    this.stats = [0,0,6,0,0,0]
+    this.stats = [0,0,0,0,0,0]
 
     // Champions
     this.champion = {
@@ -93,6 +93,11 @@ class Main {
     //remainingEvents = generateRemainingEvents();
     remainingEvents = 1;
     nextEventTimer = 0;
+    second = 0;
+    this.frame = 0;
+    //this.timerBool = false;
+    //this.gameState = 4;
+
     //nextEventTimer = generateNextEventTime();
     console.log(remainingEvents);
     window.requestAnimationFrame(draw);
@@ -100,6 +105,7 @@ class Main {
   
   frameDraw(){
     this.frame++;
+    this.renderStats();
   }
   
   renderStats() {
@@ -107,20 +113,45 @@ class Main {
     // Clear render
     stats.innerHTML = "";
 
-    this.stats.forEach((stat) => {
+    this.stats.forEach((stat,index) => {
       let container = document.createElement("div");
 
+      let specific_stat = "";
+      switch (index) {
+        case 0:
+          specific_stat = "Gold: "
+          break;
+        case 1:
+          specific_stat = "Hype: "
+          break;
+        case 2:
+          specific_stat = "Tilt: "
+          break;
+        case 3:
+          specific_stat = "Kills: "
+          break;
+        case 4:
+          specific_stat = "Assist: "
+          break;
+        case 5:
+          specific_stat = "Death: "
+          break;
+
+        default:
+          break;
+      }
+  
       // Need to fetch each icon manually
-      let img = document.createElement("img");
-      img.setAttribute("src","https://cdn.iconscout.com/icon/premium/png-256-thumb/placeholder-43-561693.png");
+      //let img = document.createElement("img");
+      //img.setAttribute("src","https://cdn.iconscout.com/icon/premium/png-256-thumb/placeholder-43-561693.png");
 
 
       // Gets the specified stat
       let text = document.createElement("strong");
-      text.innerHTML = stat;
+      text.innerHTML = (specific_stat+stat);
 
       // Append children to container
-      container.appendChild(img);
+      //container.appendChild(img);
       container.appendChild(text);
 
       // Append to main container
@@ -184,7 +215,7 @@ class Main {
     if(choice.important_stat <= 2){
       let success = (this.stats[2] - (this.stats[1]/2)+1)*Math.random(); // STUB Modify this Success Algorithm
       console.log(this.stats[2] - this.stats[1]/2+1);
-      success_rate = (choice.risk-1) <= success;
+      success_rate = (choice.risk <= 0 || ((choice.risk-1) <= success));
     }
 
     // Resetting the Pop-up Box
@@ -262,15 +293,37 @@ class Main {
   // Calculate victory
   victory(){
     let success = (Math.random()*100)
+    displayBox.innerHTML= "";
+    displayBox.style.display = "block";
+
     console.log(success);
+    if(success > 50){
+      timerBox.innerHTML = "You Win!"
+    } else {
+      timerBox.innerHTML = "You lose!"
+    }
+
+    let play_again = document.createElement("button");
+    play_again.innerHTML = "Play Again";
+    play_again.addEventListener("click", (e) => {
+      // Deletes content of Box
+      displayBox.style.display= "none";
+      displayBox.innerHTML = "";
+
+
+      // Render any necessary components
+      this.startProgram()
+      this.gameState = 0;
+      this.displayGameState()
+
+    });
+    displayBox.appendChild(play_again);
   }
 }
 
 var program = new Main();
 
 program.startProgram();
-
-let timerStopped = false;
 
 // Transition changes should happen at randomly set intervals, should generate them whenever program runs
 
@@ -283,6 +336,8 @@ function draw(timestamp){
   if(program.frame % 10 === 0){
     second++;
     nextEventTimer--;
+    program.stats[0] += Math.floor(Math.random()*27);
+    console.log(program.stats[0]);
   }
   
   if(program.gameState === 4) {
