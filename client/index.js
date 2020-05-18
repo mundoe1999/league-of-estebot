@@ -121,10 +121,10 @@ class Main {
           specific_stat = "Gold: "
           break;
         case 1:
-          specific_stat = "Hype: "
+          specific_stat = "Tilt: "
           break;
         case 2:
-          specific_stat = "Tilt: "
+          specific_stat = "Hype: "
           break;
         case 3:
           specific_stat = "Kills: "
