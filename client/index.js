@@ -20,12 +20,38 @@
 
 
 // Fetch Important Elements from main page
+
+// Generate all questions
+let pre_game = []
+let early_game = []
+let mid_game = []
+let late_game = []
+for(let i = 0; i < question_json.length; i++){
+  let question = question_json[i];
+  switch (question.phase) {
+    case 0:
+      pre_game.push(question);
+      break;
+    case 1:
+      early_game.push(question);
+      break;
+    case 2:
+      mid_game.push(question);
+      break;
+    case 3:
+      late_game.push(question);
+      break;  
+    default:
+      break;
+  }
+}
+
 var displayBox = document.getElementById("pop-up");
 var timerBox = document.getElementById("timer");
 let second = 0;
 let remainingEvents = 0;
 let nextEventTimer = 0;
-const EVENT_CONST = 10;
+const EVENT_CONST = 3;
 const TIMER_CONST = 30;
 
 
@@ -41,7 +67,7 @@ class Main {
     // gameState stores the index of which event to record
     //     0          1        2         3        4
     // [ PreGame, EarlyGame, MidGame, LateGame, PostGame]
-    this.gameState = 1;
+    this.gameState = 3;
     
     /***
      * 0 -> Gold
@@ -51,14 +77,23 @@ class Main {
      * 4 -> Deaths
      * 5 -> Assists
      */
-    this.stats = [0,0,1,0,0,0]
+    this.stats = [0,0,6,0,0,0]
+
+    // Champions
+    this.champion = {
+      name: "",
+      stat_modifiers: [1,1,1,1,1,1,0] // Last attribute is an incrementer for success percentages
+    }
   }
 
   startProgram(){
     // Display GameState
     this.displayGameState();
-    remainingEvents = generateRemainingEvents();
-    nextEventTimer = generateNextEventTime();
+    this.renderStats();
+    //remainingEvents = generateRemainingEvents();
+    remainingEvents = 1;
+    nextEventTimer = 0;
+    //nextEventTimer = generateNextEventTime();
     console.log(remainingEvents);
     window.requestAnimationFrame(draw);
   }
@@ -67,6 +102,32 @@ class Main {
     this.frame++;
   }
   
+  renderStats() {
+    let stats = document.getElementById("stats");
+    // Clear render
+    stats.innerHTML = "";
+
+    this.stats.forEach((stat) => {
+      let container = document.createElement("div");
+
+      // Need to fetch each icon manually
+      let img = document.createElement("img");
+      img.setAttribute("src","https://cdn.iconscout.com/icon/premium/png-256-thumb/placeholder-43-561693.png");
+
+
+      // Gets the specified stat
+      let text = document.createElement("strong");
+      text.innerHTML = stat;
+
+      // Append children to container
+      container.appendChild(img);
+      container.appendChild(text);
+
+      // Append to main container
+      stats.appendChild(container);
+    });
+  }
+
   displayGameState(){
     let gameStateBox = document.getElementById("state");
     switch(this.gameState){
@@ -134,7 +195,7 @@ class Main {
     
     // Modify stats and inserts text
     if(success_rate){
-      choice.success_modifiers.forEach((stat,i) => this.stats[i] += stat);
+      choice.success_modifier.forEach((stat,i) => this.stats[i] += stat);
       text.innerHTML = choice.success_text;
     } else {
       choice.fail_modifiers.forEach((stat,i) => this.stats[i] += stat);
@@ -143,6 +204,7 @@ class Main {
     // Should generate HTML for the text, and allow the flow of time again
     let continue_button = document.createElement("button");
     continue_button.innerHTML = "Continue.";
+
     continue_button.addEventListener("click", (e) => {
       // Deletes content of Box
       displayBox.style.display= "none";
@@ -156,86 +218,52 @@ class Main {
       }
       this.timerBool = false;
       second++;
+      // Render any necessary components
+
       window.requestAnimationFrame(draw);
     });
 
     // Append children
     displayBox.appendChild(text);
     displayBox.appendChild(continue_button);
+    this.renderStats();
 
   }
+
   selectRandomEvent(){
     // Should fetch the question options
+    let question = {}
+    let index = -1;
     switch(this.gameState) {
       case 0:
+        index = Math.floor(Math.random()*pre_game.length)
+        question = pre_game[index]
         break;
       case 1:
-        return {
-          question: "You are in the lane, you are doing pretty fine, the enemy's health is slow, do you want to kill?",
-          choices: [
-            {
-              text: "Kill Laner",
-              risk: 5,
-              important_stat: 2,
-              success_modifiers: [400,-1,1,1,0,0],
-              success_text: "You successfully kill your laner, hyping you up, and giving you a nice amount of gold!",
-              fail_modifiers: [0,1,0,0,0,0],
-              fail_text: "You were unable to kill the laner, even though you tried"
-            },
-            {
-              text: "Leave them alone.",
-              risk: 0,
-              important_stat: 2,
-              success_modifiers: [0,0,0,0,0,0],
-              success_text: "You let them live... For Now...",
-              fail_modifiers: [0,2,0,0,1,0],
-              fail_text: "You tried to walk away, but somehow he turns on you and kills you!"
-            }
-          ]
-        };
+        index = Math.floor(Math.random()*early_game.length)
+        question = early_game[index]
+        break;
       case 2:
-        return {
-          question: "The Dragon has spawned. You do not have vision on the dragon and the enemy jungler is nowhere to be seen. Do you wish to take it?",
-          choices: [
-            {
-              text: "Take The Dragon",
-              risk: 5,
-              important_stat: 2,
-              success_modifiers: [50,-2,4,0,0,0],
-              success_text: "You were able to take the dragon, granting you a buff for your entire party. Success!",
-              fail_modifiers: [300,2,-2,1,1,0],
-              fail_text: "The enemy team was apparently there. Even though your skills were good and you killed an enemy, you die and they take the dragon."
-            },
-            {
-              text: "Leave the Dragon alone",
-              risk: 4,
-              important_stat: 2,
-              success_modifiers: [0,0,0,0,0,0],
-              success_text: "You decide to leave the dragon alone",
-              fail_modifiers: [0,1,0,0,0,0],
-              fail_text: "The enemy decided to take advantage of your lack of objective taking, and they took it. Whatever."
-            },
-            {
-              text: "Ward the Dragon Pit.",
-              risk: 5,
-              important_stat: 2,
-              success_modifiers: [-75,0,1,0,0,0],
-              success_text: "You are able to place a nice delicate pink ward in the enemy pit, feeling successfully happy for doing so!",
-              fail_modifiers: [0,4,0,0,1,0],
-              fail_text: "As you go to ward the Dragon pit, you get ambused by the enemy team and you die a quick death. Tilting you considerably"
-            }
-          ]
-        };
+        index = Math.floor(Math.random()*mid_game.length)
+        question = mid_game[index]
+        break;
       case 3:
+        index = Math.floor(Math.random()*late_game.length)
+        question = late_game[index]
         break;
       case 4:
         break;
       default:
         break;
     } 
+    return question;
   }
 
-
+  // Calculate victory
+  victory(){
+    let success = (Math.random()*100)
+    console.log(success);
+  }
 }
 
 var program = new Main();
@@ -252,12 +280,16 @@ function draw(timestamp){
   program.frameDraw();
   
   // Counter Management
-  if(program.frame % 30 === 0){
+  if(program.frame % 10 === 0){
     second++;
     nextEventTimer--;
-    
   }
   
+  if(program.gameState === 4) {
+    timerBox.innerHTML = "END";
+    console.log(program.victory());
+    return;
+  }
   // Display Event and Text
   if(nextEventTimer == 0){
     program.timerBool=true;
