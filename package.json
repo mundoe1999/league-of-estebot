@@ -10,6 +10,7 @@
   "author": "Esteban Mundo",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1"
   }
 }
