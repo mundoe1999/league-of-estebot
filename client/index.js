@@ -95,6 +95,9 @@ class Main {
     nextEventTimer = 0;
     second = 0;
     this.stats[0] = 0;
+    this.stats[3] = 0;
+    this.stats[4] = 0;
+    this.stats[5] = 0;
     this.frame = 0;
     //this.timerBool = false;
     //this.gameState = 4;
@@ -302,8 +305,12 @@ class Main {
 
     if(success > 50){
       timerBox.innerHTML = "You Win!"
+      this.stats[1] -= 4;
+      this.stats += 4;
     } else {
       timerBox.innerHTML = "You lose!"
+      this.stats[1] += 4;
+      this.stats -= 4;
     }
 
     let play_again = document.createElement("button");
