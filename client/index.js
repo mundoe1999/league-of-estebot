@@ -131,10 +131,10 @@ class Main {
           specific_stat = "Kills: "
           break;
         case 4:
-          specific_stat = "Assist: "
+          specific_stat = "Death: "
           break;
         case 5:
-          specific_stat = "Death: "
+          specific_stat = "Assists: "
           break;
 
         default:
