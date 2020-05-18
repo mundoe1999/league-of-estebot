@@ -94,6 +94,7 @@ class Main {
     remainingEvents = 1;
     nextEventTimer = 0;
     second = 0;
+    this.stats[0] = 0;
     this.frame = 0;
     //this.timerBool = false;
     //this.gameState = 4;
