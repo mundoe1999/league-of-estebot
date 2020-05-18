@@ -51,7 +51,7 @@ var timerBox = document.getElementById("timer");
 let second = 0;
 let remainingEvents = 0;
 let nextEventTimer = 0;
-const EVENT_CONST = 3;
+const EVENT_CONST = 4;
 const TIMER_CONST = 30;
 
 
@@ -99,7 +99,6 @@ class Main {
     //this.gameState = 4;
 
     //nextEventTimer = generateNextEventTime();
-    console.log(remainingEvents);
     window.requestAnimationFrame(draw);
   }
   
@@ -181,7 +180,6 @@ class Main {
   }
   showEvent(){
     program.timerBool=true;
-    console.log(`Events: ${remainingEvents}`);
     // Fetch Random Event
     let randomEvent = {};
     randomEvent = this.selectRandomEvent();
@@ -214,7 +212,6 @@ class Main {
     let success_rate = true;
     if(choice.important_stat <= 2){
       let success = (this.stats[2] - (this.stats[1]/2)+1)*Math.random(); // STUB Modify this Success Algorithm
-      console.log(this.stats[2] - this.stats[1]/2+1);
       success_rate = (choice.risk <= 0 || ((choice.risk-1) <= success));
     }
 
@@ -244,7 +241,11 @@ class Main {
       // Continue regularly Scheduled program
       if(remainingEvents === 0){
         this.gameState++;
-        remainingEvents = generateRemainingEvents();
+        if(this.gameState === 0 || this.gameState === 3){
+          remainingEvents = 1;
+        } else {
+          remainingEvents = generateRemainingEvents();
+        }
         this.displayGameState();
       }
       this.timerBool = false;
@@ -287,6 +288,7 @@ class Main {
       default:
         break;
     } 
+    console.log(question);
     return question;
   }
 
@@ -296,7 +298,7 @@ class Main {
     displayBox.innerHTML= "";
     displayBox.style.display = "block";
 
-    console.log(success);
+
     if(success > 50){
       timerBox.innerHTML = "You Win!"
     } else {
@@ -337,7 +339,6 @@ function draw(timestamp){
     second++;
     nextEventTimer--;
     program.stats[0] += Math.floor(Math.random()*27);
-    console.log(program.stats[0]);
   }
   
   if(program.gameState === 4) {
