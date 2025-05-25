@@ -1,3 +1,10 @@
+/**
+ * Todo:
+ * 1. Modify all existing results in json with appropriate riskFactor modifier
+ * 2. Convert file to typescript appropriate file for better reading and presentability
+ * 3. Convert gameState to enum for better access.
+ */
+
 // Import Module of Event Games, should be JSON files
 
 /**
