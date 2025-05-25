@@ -214,19 +214,23 @@ class Main {
 
   }
 
-  successRateCalculator = (hype, tilt, money, gameState) => {
+  successRateCalculator = (riskFactor, hypeModifier, tiltModifier, goldStatus, gameState) => {
     // Rate can be calculated from the following determination
     // Using simple D20 roll rules
-    // Risk Factor (1-30)
     // Hype is a positive modified
     // Tilt is a negative modifier
     // Gold is a positive/negative modifier that is influenced by the current game state
-    // This means that, early game 0 + Gold/1000 || Mid -3 + Gold/1000 || Late -7 + Gold/1000
-    // Player rolls die (1-20) + hype - tilt + moneyDiff
-
-    let rollDice = 1+Math.floor(Math.random()*20)
     
-    return rollDice
+    let rollDice = 1+Math.floor(Math.random()*20)
+    const gameStateInitializer = {
+      "PreGame": 0,
+      "EarlyGame": 0, 
+      "MidGame": 3, 
+      "LateGame": 7,
+      "PostGame": 0}
+    let gameStateModifier = goldStatus/1000 - (gameStateInitializer[gameState] || 0)
+    
+    return riskFactor <= (rollDice + hypeModifier - tiltModifier + gameStateModifier)
   }
 
 
