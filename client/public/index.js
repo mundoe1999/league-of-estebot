@@ -200,6 +200,7 @@ class Main {
     // generate choice buttons HTML
     randomEvent.choices.forEach((choice, index)=>{
       let choiceHTML = document.createElement("button");
+      choiceHTML.className = "button-option"
       choiceHTML.innerHTML = choice.text;
       choiceHTML.addEventListener("click", (e)=>this.displayResult(choice))
       choices.appendChild(choiceHTML);
@@ -212,6 +213,22 @@ class Main {
 
 
   }
+
+  successRateCalculator = (hype, tilt, money, gameState) => {
+    // Rate can be calculated from the following determination
+    // Using simple D20 roll rules
+    // Risk Factor (1-30)
+    // Hype is a positive modified
+    // Tilt is a negative modifier
+    // Gold is a positive/negative modifier that is influenced by the current game state
+    // This means that, early game 0 + Gold/1000 || Mid -3 + Gold/1000 || Late -7 + Gold/1000
+    // Player rolls die (1-20) + hype - tilt + moneyDiff
+
+    let rollDice = 1+Math.floor(Math.random()*20)
+    
+    return rollDice
+  }
+
 
   displayResult(choice) {
     // Calculate Success rate
@@ -236,10 +253,11 @@ class Main {
       text.innerHTML = choice.fail_text;
     }
     // Should generate HTML for the text, and allow the flow of time again
-    let continue_button = document.createElement("button");
-    continue_button.innerHTML = "Continue.";
+    let continueButton = document.createElement("button");
+    continueButton.innerHTML = "Continue.";
 
-    continue_button.addEventListener("click", (e) => {
+    continueButton.addEventListener("click", (e) => {
+      e.preventDefault();
       // Deletes content of Box
       displayBox.style.display= "none";
       displayBox.innerHTML = "";
@@ -263,7 +281,7 @@ class Main {
 
     // Append children
     displayBox.appendChild(text);
-    displayBox.appendChild(continue_button);
+    displayBox.appendChild(continueButton);
     this.renderStats();
 
   }
