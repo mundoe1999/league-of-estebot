@@ -69,6 +69,13 @@ let generateNextEventTime = () => Math.floor(Math.random()*TIMER_CONST)+15;
 
 // Main Object for manipulating Events
 class Main {
+  playerStats = {
+    "hype": 0,
+    "tilt": 0,
+    "gold": 0,
+    "kda": [0,0,0]
+  }
+
   constructor(){
     this.frame = 0;
     this.timerBool = false;
@@ -125,8 +132,22 @@ class Main {
     // Clear render
     stats.innerHTML = "";
 
+
+    let head = document.createElement("tr")
+    let stat = document.createElement("th");
+    stat.innerHTML = "Stat";
+    let value = document.createElement("th")
+    value.innerHTML = "Value";
+
+    // Append children to container
+    stats.appendChild(head)
+    head.appendChild(stat);
+    head.appendChild(value);
+
+
+
     this.stats.forEach((stat,index) => {
-      let container = document.createElement("div");
+      let container = document.createElement("tr");
 
       let specific_stat = "";
       switch (index) {
@@ -153,18 +174,15 @@ class Main {
           break;
       }
   
-      // Need to fetch each icon manually
-      //let img = document.createElement("img");
-      //img.setAttribute("src","https://cdn.iconscout.com/icon/premium/png-256-thumb/placeholder-43-561693.png");
-
-
       // Gets the specified stat
-      let text = document.createElement("strong");
-      text.innerHTML = (specific_stat+stat);
+      let statName = document.createElement("td");
+      statName.innerHTML = specific_stat;
+      let statValue = document.createElement("td")
+      statValue.innerHTML = stat;
 
       // Append children to container
-      //container.appendChild(img);
-      container.appendChild(text);
+      container.appendChild(statName);
+      container.appendChild(statValue);
 
       // Append to main container
       stats.appendChild(container);
@@ -364,6 +382,7 @@ class Main {
 
 var program = new Main();
 
+console.log(program)
 program.startProgram();
 
 // Transition changes should happen at randomly set intervals, should generate them whenever program runs

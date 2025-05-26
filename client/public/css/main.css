@@ -25,13 +25,29 @@ body {
   text-align: center;
 }
 
-#stats {
-  display: flex;
-  flex-direction: row;
+table {
+  display: table;
   font-size: 2em;
+  margin: 0;
+  padding: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border: 3px solid black;
+
 }
 
-#stats img{
-  width: 20px;
-  height: 20px;
+th,td {
+  text-align: center;
+  margin: 0.2em;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  display: table-row;
+  background-color: lightblue;
+}
+
+td {
+  display: table-cell;
+
 }
