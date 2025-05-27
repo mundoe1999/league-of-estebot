@@ -67,6 +67,25 @@ let generateRemainingEvents = () =>  Math.floor(Math.random()*EVENT_CONST)+1;
 
 let generateNextEventTime = () => Math.floor(Math.random()*TIMER_CONST)+15;
 
+// Class for handling event
+class GameEventHandler {
+
+  // All Events are fetched and stored
+  // Count of Events per phase are calculated
+  
+  constructor(){
+    const eventRecords = {}
+    for(let i = 0; i < questions.length; question )
+  }
+  
+  generateEvent(gameState){}
+
+
+
+}
+
+
+
 // Main Object for manipulating Events
 class Main {
   playerStats = {

@@ -46,8 +46,3 @@ tr:nth-child(even) {
   display: table-row;
   background-color: lightblue;
 }
-
-td {
-  display: table-cell;
-
-}
