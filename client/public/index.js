@@ -63,24 +63,59 @@ const TIMER_CONST = 30;
 
 
 
+const randomArrayValue = (arrayLength, constant) => Math.floor(Math.random()*arrayLength)+constant
+
 let generateRemainingEvents = () =>  Math.floor(Math.random()*EVENT_CONST)+1;
 
 let generateNextEventTime = () => Math.floor(Math.random()*TIMER_CONST)+15;
 
 // Class for handling event
 class GameEventHandler {
-
+  eventRecords = {}
   // All Events are fetched and stored
   // Count of Events per phase are calculated
   
-  constructor(){
+  constructor(events){
     const eventRecords = {}
-    for(let i = 0; i < questions.length; question )
+    // Store all questions
+    questions.forEach((question) => {
+      const gameState = question.gameState
+      if(!eventRecords[gameState]){
+        eventRecords[gameState] = {questions: [question], total: null, remaining: null}
+      } else { 
+        eventRecords[gameState].questions.push(question)
+      }
+    })
+
+    // For each phase, generate count of events
+    Object.keys(eventRecords).forEach((phase) => {
+      const totalPhaseEvents =  eventRecords[phase].questions.length
+      const phaseEventCount = events ? Math.min((events[phase] ?? randomArrayValue(totalPhaseEvents,1)),totalPhaseEvents) : randomArrayValue(totalPhaseEvents,1)
+      eventRecords[phase] = {...eventRecords[phase], total:phaseEventCount, remaining: phaseEventCount}
+    })
+
+    this.eventRecords = eventRecords
   }
   
-  generateEvent(gameState){}
+  generateEvent(gameState){
 
+    const remainingCount = this.eventRecords[gameState].remaining
+    
+    if(remainingCount > 0){
+      // get random event
+      const totalPhaseEvents = this.eventRecords[gameState].questions.length
+      const eventToFetch = randomArrayValue(totalPhaseEvents, 0)
+      const event = this.eventRecords[gameState].questions.splice(eventToFetch, 1)
+      this.eventRecords[gameState].remaining--;
+      return event.pop()
+    }
 
+    return undefined
+  }
+
+  getEventRecords() {
+    return this.eventRecords;
+  }
 
 }
 
@@ -95,7 +130,9 @@ class Main {
     "kda": [0,0,0]
   }
 
-  constructor(){
+  constructor(){ 
+    var events = new GameEventHandler({"PreGame": 1});
+    // console.log(events.getEventRecords())
     this.frame = 0;
     this.timerBool = false;
 
