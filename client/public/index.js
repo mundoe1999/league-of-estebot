@@ -117,6 +117,32 @@ class GameEventHandler {
     return this.eventRecords;
   }
 
+  successRateCalculator = (riskFactor, hypeModifier, tiltModifier, goldStatus, gameState) => {
+    // Rate can be calculated from the following determination
+    // Using simple D20 roll rules
+    // Hype is a positive modified
+    // Tilt is a negative modifier
+    // Gold is a positive/negative modifier that is influenced by the current game state
+    
+    let rollDice = 1+Math.floor(Math.random()*20)
+    const gameStateInitializer = {
+      "PreGame": 0,
+      "EarlyGame": 0, 
+      "MidGame": 3, 
+      "LateGame": 7,
+      "PostGame": 0}
+    let gameStateModifier = goldStatus/1000 - (gameStateInitializer[gameState] || 0)
+    
+    return riskFactor <= (rollDice + hypeModifier - tiltModifier + gameStateModifier)
+  }
+
+  // Adding layer of abstraction to simplify rendering logic.
+  calculateChoice(choice, playerStats){
+    if(this.successRateCalculator(choice.riskFactor, playerStats["hype"], playerStats["tilt"], playerStats["gold"], playerStats["gameState"])){
+      return {message: choice.successMessage, modifiers: choice.successModifiers}
+    }
+    return {message: choice.failMessage, modifiers: choice.failModifiers}
+  }
 }
 
 
@@ -124,6 +150,7 @@ class GameEventHandler {
 // Main Object for manipulating Events
 class Main {
   playerStats = {
+    "gameState": "PreGame"
     "hype": 0,
     "tilt": 0,
     "gold": 0,
@@ -295,24 +322,7 @@ class Main {
 
   }
 
-  successRateCalculator = (riskFactor, hypeModifier, tiltModifier, goldStatus, gameState) => {
-    // Rate can be calculated from the following determination
-    // Using simple D20 roll rules
-    // Hype is a positive modified
-    // Tilt is a negative modifier
-    // Gold is a positive/negative modifier that is influenced by the current game state
-    
-    let rollDice = 1+Math.floor(Math.random()*20)
-    const gameStateInitializer = {
-      "PreGame": 0,
-      "EarlyGame": 0, 
-      "MidGame": 3, 
-      "LateGame": 7,
-      "PostGame": 0}
-    let gameStateModifier = goldStatus/1000 - (gameStateInitializer[gameState] || 0)
-    
-    return riskFactor <= (rollDice + hypeModifier - tiltModifier + gameStateModifier)
-  }
+
 
 
   displayResult(choice) {
