@@ -150,7 +150,7 @@ class GameEventHandler {
 // Main Object for manipulating Events
 class Main {
   playerStats = {
-    "gameState": "PreGame"
+    "gameState": "PreGame",
     "hype": 0,
     "tilt": 0,
     "gold": 0,
